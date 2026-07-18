@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0f12">
+<meta name="description" content="Professional medical laboratory reference ranges for research and clinical education.">
+<title>LabScope - Clinical Reference</title>
+<style>
+:root{--bg:#0f0f12;--bg-elev:#1a1a1f;--bg-card:#1e1e24;--bg-hover:#25252c;--border:#2a2a32;--border-light:#35353f;--text:#f0f0f5;--text-sec:#a0a0b0;--text-tert:#6e6e7e;--accent:#60a5fa;--accent-dim:#1e3a5f;--accent-glow:rgba(96,165,250,0.15);--success:#34d399;--success-dim:#064e3b;--warning:#fbbf24;--danger:#f87171;--danger-dim:#7f1d1d;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--shadow:0 4px 24px rgba(0,0,0,0.4);--shadow-sm:0 2px 8px rgba(0,0,0,0.3);--transition:0.25s cubic-bezier(0.4,0,0.2,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-mesh::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 20% 30%,rgba(96,165,250,0.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(52,211,153,0.04) 0%,transparent 50%),radial-gradient(circle at 50% 50%,rgba(251,191,36,0.03) 0%,transparent 40%);animation:meshMove 20s ease-in-out infinite}
+@keyframes meshMove{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(2%,-1%) scale(1.02)}66%{transform:translate(-1%,2%) scale(0.98)}}
+.app-header{position:sticky;top:0;z-index:100;background:rgba(15,15,18,0.85);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border);padding:20px 20px 16px}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:40px;height:40px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--accent),#818cf8);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px rgba(96,165,250,0.3);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 20px rgba(96,165,250,0.3)}50%{box-shadow:0 0 32px rgba(96,165,250,0.5)}}
+.brand-text h1{font-size:22px;font-weight:700;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff,#a0a0b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.brand-text span{font-size:12px;color:var(--text-tert);letter-spacing:0.5px;text-transform:uppercase}
+.count-chip{background:var(--bg-elev);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;color:var(--text-sec);display:flex;align-items:center;gap:6px}
+.count-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success)}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-tert);font-size:16px;z-index:2}
+#search{width:100%;padding:14px 16px 14px 44px;border:1px solid var(--border);border-radius:var(--radius-md);font-size:15px;background:var(--bg-elev);color:var(--text);outline:none;transition:all var(--transition);box-shadow:var(--shadow-sm)}
+#search:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow),var(--shadow-sm)}
+#search::placeholder{color:var(--text-tert)}
+.cats-scroll{display:flex;gap:10px;padding:16px 20px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;position:sticky;top:92px;z-index:90;background:rgba(15,15,18,0.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.cats-scroll::-webkit-scrollbar{display:none}
+.cat-chip{flex-shrink:0;padding:8px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg-elev);color:var(--text-sec);transition:all var(--transition);user-select:none;white-space:nowrap;position:relative;overflow:hidden}
+.cat-chip::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),#818cf8);opacity:0;transition:opacity var(--transition);z-index:0}
+.cat-chip span{position:relative;z-index:1}
+.cat-chip:hover{border-color:var(--border-light);color:var(--text);transform:translateY(-1px)}
+.cat-chip.active{border-color:transparent;color:#fff;box-shadow:0 4px 16px rgba(96,165,250,0.25)}
+.cat-chip.active::before{opacity:1}
+.results{padding:12px 20px 40px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.test-card{background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;transition:all var(--transition);cursor:pointer;position:relative}
+.test-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),#818cf8);opacity:0;transition:opacity var(--transition)}
+.test-card:hover{border-color:var(--border-light);transform:translateY(-2px);box-shadow:var(--shadow)}
+.test-card:hover::before{opacity:1}
+.test-card.expanded{border-color:var(--border-light);box-shadow:var(--shadow)}
+.test-card.expanded::before{opacity:1}
+.card-top{padding:18px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.card-left{flex:1;min-width:0}
+.test-name{font-size:16px;font-weight:600;color:var(--text);line-height:1.3;word-wrap:break-word;letter-spacing:-0.2px}
+.test-abbr{display:inline-block;font-size:11px;color:var(--accent);font-family:"SF Mono",Monaco,"Cascadia Code",monospace;background:var(--accent-dim);padding:3px 8px;border-radius:6px;margin-left:8px;vertical-align:1px;border:1px solid rgba(96,165,250,0.2)}
+.meta-row{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.cat-tag{font-size:11px;font-weight:600;color:var(--text-tert);background:var(--bg-hover);padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px}
+.unit-tag{font-size:11px;color:var(--text-sec);font-family:"SF Mono",monospace}
+.card-right{text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.range-main{font-size:20px;font-weight:700;color:var(--success);letter-spacing:-0.3px;line-height:1}
+.range-sub{font-size:11px;color:var(--text-tert);margin-top:2px}
+.card-body{display:none;padding:0 20px 18px;border-top:1px solid var(--border);margin-top:0;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.test-card.expanded .card-body{display:block}
+.detail-section{padding:16px 0}
+.detail-section-title{font-size:11px;font-weight:700;color:var(--text-tert);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--bg-elev);border-radius:var(--radius-sm);border:1px solid var(--border);transition:all 0.15s ease}
+.detail-row:hover{border-color:var(--border-light)}
+.detail-label{font-size:13px;color:var(--text-sec);display:flex;align-items:center;gap:6px}
+.detail-label::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--text-tert)}
+.detail-value{font-size:14px;color:var(--text);font-weight:600;font-family:"SF Mono",monospace}
+.clinical-note{margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,var(--accent-dim),rgba(96,165,250,0.05));border:1px solid rgba(96,165,250,0.15);border-radius:var(--radius-sm);position:relative;overflow:hidden}
+.clinical-note::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.note-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px}
+.note-text{font-size:13px;color:var(--text-sec);line-height:1.7}
+.no-results{text-align:center;padding:60px 20px;color:var(--text-tert)}
+.no-results-icon{width:64px;height:64px;margin:0 auto 20px;border-radius:50%;background:var(--bg-elev);display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--border)}
+.no-results h3{font-size:18px;font-weight:600;color:var(--text-sec);margin-bottom:8px}
+.no-results p{font-size:14px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-tert)}
+::selection{background:rgba(96,165,250,0.3);color:#fff}
+@media(max-width:480px){
+.app-header{padding:16px 16px 12px}
+.brand-icon{width:36px;height:36px;font-size:16px}
+.brand-text h1{font-size:18px}
+.results{padding:10px 16px 32px}
+.cats-scroll{padding:12px 16px;top:84px}
+.card-top{padding:14px 16px}
+.test-name{font-size:15px}
+.range-main{font-size:18px}
+.detail-grid{grid-template-columns:1fr}
+}
+@media(prefers-color-scheme:light){
+:root{--bg:#f8f9fc;--bg-elev:#fff;--bg-card:#fff;--bg-hover:#f1f5f9;--border:#e2e8f0;--border-light:#cbd5e1;--text:#0f172a;--text-sec:#475569;--text-tert:#94a3b8;--accent:#2563eb;--accent-dim:#dbeafe;--accent-glow:rgba(37,99,235,0.1);--success:#059669;--success-dim:#d1fae5;--warning:#d97706;--danger:#dc2626;--danger-dim:#fee2e2;--shadow:0 4px 24px rgba(0,0,0,0.08);--shadow-sm:0 2px 8px rgba(0,0,0,0.05)}
+.app-header{background:rgba(248,249,252,0.85);border-bottom-color:var(--border)}
+.cats-scroll{background:rgba(248,249,252,0.7);border-bottom-color:var(--border)}
+.count-chip{background:var(--bg-elev);border-color:var(--border)}
+.clinical-note{background:linear-gradient(135deg,var(--accent-dim),rgba(37,99,235,0.03));border-color:rgba(37,99,235,0.12)}
+.clinical-note::before{background:var(--accent)}
+.note-header{color:var(--accent)}
+.test-abbr{color:var(--accent);background:var(--accent-dim);border-color:rgba(37,99,235,0.15)}
+.range-main{color:var(--success)}
+.test-card::before{background:linear-gradient(180deg,var(--accent),#60a5fa)}
+.cat-chip.active{box-shadow:0 4px 16px rgba(37,99,235,0.2)}
+.cat-chip.active::before{background:linear-gradient(135deg,var(--accent),#60a5fa)}
+.brand-icon{background:linear-gradient(135deg,var(--accent),#60a5fa);box-shadow:0 0 20px rgba(37,99,235,0.25)}
+@keyframes pulse{0%,100%{box-shadow:0 0 20px rgba(37,99,235,0.25)}50%{box-shadow:0 0 32px rgba(37,99,235,0.4)}}
+}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-header">
+  <div class="header-top">
+    <div class="brand">
+      <div class="brand-icon">&#128300;</div>
+      <div class="brand-text">
+        <h1>LabScope</h1>
+        <span>Clinical Reference</span>
+      </div>
+    </div>
+    <div class="count-chip" id="countPill">0 tests</div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="search" placeholder="Search by name, abbreviation, or category..." autocomplete="off">
+  </div>
+</div>
+<div class="cats-scroll" id="catsScroll"></div>
+<div class="results" id="results"></div>
+
+<script>
+const tests=[{nm:"Hemoglobin",ab:"Hb",ct:"Hematology",un:"g/dL",rg:"13.5-17.5",m:"13.5-17.5",f:"12.0-16.0",no:"Varies with altitude and smoking status. Lower in pregnancy. Critical low <7 g/dL may require transfusion."},
+{nm:"Hematocrit",ab:"Hct",ct:"Hematology",un:"%",rg:"38.3-48.6",m:"38.3-48.6",f:"35.5-44.9",no:"Percentage of blood volume occupied by RBCs. Dehydration falsely elevates; overhydration falsely lowers."},
+{nm:"Red Blood Cell Count",ab:"RBC",ct:"Hematology",un:"x10^12/L",rg:"4.3-5.9",m:"4.3-5.9",f:"3.5-5.5",no:"May be elevated in dehydration or polycythemia. Low in anemia, hemorrhage, hemolysis."},
+{nm:"Mean Corpuscular Volume",ab:"MCV",ct:"Hematology",un:"fL",rg:"80-100",no:"<80 = microcytic (iron deficiency, thalassemia); >100 = macrocytic (B12/folate deficiency, liver disease, alcohol)."},
+{nm:"Mean Corpuscular Hemoglobin",ab:"MCH",ct:"Hematology",un:"pg",rg:"27-33",no:"Average amount of hemoglobin per RBC. Decreased in iron deficiency and thalassemia."},
+{nm:"Mean Corpuscular Hgb Concentration",ab:"MCHC",ct:"Hematology",un:"g/dL",rg:"32-36",no:"Concentration of hemoglobin in RBCs. Low in iron deficiency; high in spherocytosis."},
+{nm:"Red Cell Distribution Width",ab:"RDW",ct:"Hematology",un:"%",rg:"11.5-14.5",no:"Measures variation in RBC size. Elevated in mixed anemias, early iron deficiency, B12/folate deficiency."},
+{nm:"White Blood Cell Count",ab:"WBC",ct:"Hematology",un:"x10^9/L",rg:"4.0-11.0",no:"Elevated in infection, inflammation, leukemia; low in bone marrow suppression, autoimmune disease, viral infections."},
+{nm:"Neutrophils",ab:"NEU",ct:"Hematology",un:"%",rg:"40-70",no:"First responders to bacterial infection. Left shift indicates immature forms in severe infection."},
+{nm:"Lymphocytes",ab:"LYM",ct:"Hematology",un:"%",rg:"20-40",no:"Key role in viral immunity and antibody production. Elevated in viral infections, CLL; low in HIV, immunosuppression."},
+{nm:"Monocytes",ab:"MONO",ct:"Hematology",un:"%",rg:"2-8",no:"Phagocytic cells; elevated in chronic inflammation, TB, autoimmune disease, recovery from infection."},
+{nm:"Eosinophils",ab:"EOS",ct:"Hematology",un:"%",rg:"1-4",no:"Elevated in allergies, parasitic infections, autoimmune disease, certain drug reactions."},
+{nm:"Basophils",ab:"BASO",ct:"Hematology",un:"%",rg:"0-1",no:"Involved in allergic reactions and heparin release. Rare elevations seen in myeloproliferative disorders."},
+{nm:"Platelet Count",ab:"PLT",ct:"Hematology",un:"x10^9/L",rg:"150-400",no:"Essential for clotting. <50 = bleeding risk; >450 = thrombocytosis. Monitor in DIC, TTP, HUS."},
+{nm:"Mean Platelet Volume",ab:"MPV",ct:"Hematology",un:"fL",rg:"7.4-10.4",no:"Average platelet size. Larger platelets are younger and more reactive. Elevated in ITP, recovery from thrombocytopenia."},
+{nm:"Erythrocyte Sedimentation Rate",ab:"ESR",ct:"Hematology",un:"mm/hr",rg:"0-15",m:"0-15",f:"0-20",no:"Non-specific marker of inflammation. Rises with age (age/2 for men, age+10/2 for women). Elevated in infection, autoimmune disease, malignancy."},
+{nm:"Reticulocyte Count",ab:"RETIC",ct:"Hematology",un:"%",rg:"0.5-2.5",no:"Immature RBCs. Elevated in hemolysis or recovery from anemia; low in bone marrow failure, aplastic anemia."},
+{nm:"Glucose (Fasting)",ab:"FBG",ct:"Chemistry",un:"mg/dL",rg:"70-100",no:"Diabetes threshold: >=126 mg/dL on two occasions. Prediabetes: 100-125. Check HbA1c for confirmation."},
+{nm:"Glucose (Random)",ab:"RBG",ct:"Chemistry",un:"mg/dL",rg:"<140",no:"<200 mg/dL generally normal; >200 with symptoms (polyuria, polydipsia, weight loss) suggests diabetes."},
+{nm:"HbA1c",ab:"A1c",ct:"Chemistry",un:"%",rg:"<5.7",no:"Prediabetes: 5.7-6.4%. Diabetes: >=6.5%. Reflects 2-3 month glucose average. Target for diabetics: <7%."},
+{nm:"Total Cholesterol",ab:"TC",ct:"Chemistry",un:"mg/dL",rg:"<200",no:"Desirable: <200. Borderline: 200-239. High: >=240. Calculate 10-year ASCVD risk for treatment decisions."},
+{nm:"LDL Cholesterol",ab:"LDL",ct:"Chemistry",un:"mg/dL",rg:"<100",no:"Optimal: <100. Near optimal: 100-129. High: >=160. Very high: >=190. Primary target of lipid-lowering therapy."},
+{nm:"HDL Cholesterol",ab:"HDL",ct:"Chemistry",un:"mg/dL",rg:">40",m:">40",f:">50",no:"Higher is better. Protective against cardiovascular disease. Low HDL is independent risk factor."},
+{nm:"Triglycerides",ab:"TG",ct:"Chemistry",un:"mg/dL",rg:"<150",no:"Normal: <150. Borderline: 150-199. High: 200-499. Very high: >=500 (pancreatitis risk). Fasting 12 hours required."},
+{nm:"Total Bilirubin",ab:"TBili",ct:"Chemistry",un:"mg/dL",rg:"0.1-1.2",no:"Elevated in liver disease, hemolysis, or bile duct obstruction. >2.5 causes clinical jaundice."},
+{nm:"Direct Bilirubin",ab:"DBili",ct:"Chemistry",un:"mg/dL",rg:"0.0-0.3",no:"Conjugated bilirubin. Elevated in obstructive jaundice, Dubin-Johnson syndrome. Direct >50% of total suggests cholestasis."},
+{nm:"Alanine Aminotransferase",ab:"ALT",ct:"Chemistry",un:"U/L",rg:"10-40",m:"10-40",f:"7-35",no:"Liver-specific enzyme. Elevated in hepatitis, fatty liver, drug toxicity, alcohol. >3x ULN = significant hepatocellular injury."},
+{nm:"Aspartate Aminotransferase",ab:"AST",ct:"Chemistry",un:"U/L",rg:"15-40",m:"15-40",f:"13-35",no:"Found in liver, heart, muscle, kidney, brain. AST:ALT ratio >2 suggests alcohol-related liver disease."},
+{nm:"Alkaline Phosphatase",ab:"ALP",ct:"Chemistry",un:"U/L",rg:"44-147",no:"Elevated in bile duct obstruction, bone disease, pregnancy, growing children. GGT helps distinguish liver vs bone source."},
+{nm:"Gamma-Glutamyl Transferase",ab:"GGT",ct:"Chemistry",un:"U/L",rg:"10-71",m:"10-71",f:"6-42",no:"Sensitive marker of biliary disease and alcohol use. Elevated by many drugs including phenytoin, barbiturates."},
+{nm:"Total Protein",ab:"TP",ct:"Chemistry",un:"g/dL",rg:"6.0-8.3",no:"Includes albumin and globulins. Low in malnutrition, liver disease, nephrotic syndrome, protein-losing enteropathy."},
+{nm:"Albumin",ab:"Alb",ct:"Chemistry",un:"g/dL",rg:"3.5-5.0",no:"Major plasma protein. Half-life ~20 days. Low in liver disease, malnutrition, nephrotic syndrome, inflammation. Correct calcium for albumin."},
+{nm:"Globulin",ab:"Glob",ct:"Chemistry",un:"g/dL",rg:"2.0-3.5",no:"Includes antibodies. Elevated in chronic infections, autoimmune disease, multiple myeloma."},
+{nm:"A/G Ratio",ab:"A/G",ct:"Chemistry",un:"ratio",rg:"1.0-2.2",no:"Reversed (<1) in chronic liver disease and some myelomas. Calculated as albumin / (total protein - albumin)."},
+{nm:"Blood Urea Nitrogen",ab:"BUN",ct:"Chemistry",un:"mg/dL",rg:"7-20",no:"Waste product of protein metabolism. Elevated in kidney disease, dehydration, high protein intake, GI bleeding."},
+{nm:"Creatinine",ab:"Cr",ct:"Chemistry",un:"mg/dL",rg:"0.7-1.3",m:"0.7-1.3",f:"0.6-1.1",no:"Muscle waste product. Best marker of kidney function. Varies with muscle mass, age, sex. Check eGFR for staging."},
+{nm:"BUN/Creatinine Ratio",ab:"BUN/Cr",ct:"Chemistry",un:"ratio",rg:"10:1-20:1",no:">20:1 suggests prerenal azotemia (dehydration, CHF, GI bleed). <10:1 suggests liver disease or low protein intake."},
+{nm:"Estimated GFR",ab:"eGFR",ct:"Chemistry",un:"mL/min/1.73m2",rg:">90",no:"CKD stages: G1 >=90, G2 60-89, G3a 45-59, G3b 30-44, G4 15-29, G5 <15. Calculated from creatinine using CKD-EPI equation."},
+{nm:"Uric Acid",ab:"UA",ct:"Chemistry",un:"mg/dL",rg:"3.5-7.2",m:"3.5-7.2",f:"2.6-6.0",no:"Elevated in gout, kidney disease, tumor lysis syndrome, diuretic use. Target <6 for gout prophylaxis."},
+{nm:"Sodium",ab:"Na",ct:"Chemistry",un:"mEq/L",rg:"136-145",no:"Critical for fluid balance. <120 or >160 can be life-threatening. Correct for hyperglycemia (pseudo-hyponatremia)."},
+{nm:"Potassium",ab:"K",ct:"Chemistry",un:"mEq/L",rg:"3.5-5.0",no:"Critical for cardiac rhythm. <2.5 or >6.5 is emergent. Hemolysis falsely elevates; check for clotted sample."},
+{nm:"Chloride",ab:"Cl",ct:"Chemistry",un:"mEq/L",rg:"98-106",no:"Follows sodium; elevated in dehydration, metabolic acidosis, respiratory alkalosis. Low in vomiting, diuretics."},
+{nm:"Bicarbonate",ab:"HCO3",ct:"Chemistry",un:"mEq/L",rg:"22-28",no:"Metabolic component of acid-base balance. Low in metabolic acidosis; high in metabolic alkalosis, respiratory acidosis."},
+{nm:"Calcium",ab:"Ca",ct:"Chemistry",un:"mg/dL",rg:"8.5-10.5",no:"Regulated by PTH, vitamin D. Correct for albumin: Corrected Ca = Measured + 0.8 x (4 - Albumin)."},
+{nm:"Ionized Calcium",ab:"iCa",ct:"Chemistry",un:"mmol/L",rg:"1.15-1.33",no:"Biologically active form. Not affected by albumin levels. Preferred in ICU and post-operative patients."},
+{nm:"Phosphorus",ab:"Phos",ct:"Chemistry",un:"mg/dL",rg:"2.5-4.5",no:"Inversely related to calcium. Elevated in kidney disease, hypoparathyroidism. Low in refeeding syndrome, alcohol withdrawal."},
+{nm:"Magnesium",ab:"Mg",ct:"Chemistry",un:"mg/dL",rg:"1.7-2.2",no:"Cofactor for many enzymes. Low in alcoholism, malabsorption, diuretics, PPIs. Check if hypokalemia or hypocalcemia refractory."},
+{nm:"Iron",ab:"Fe",ct:"Chemistry",un:"ug/dL",rg:"65-175",m:"65-175",f:"50-170",no:"Best measured in morning (diurnal variation). Elevated in hemochromatosis, hemolysis, iron overdose."},
+{nm:"Total Iron-Binding Capacity",ab:"TIBC",ct:"Chemistry",un:"ug/dL",rg:"250-400",no:"Elevated in iron deficiency anemia. Low in anemia of chronic disease, malnutrition, liver disease."},
+{nm:"Ferritin",ab:"Ferritin",ct:"Chemistry",un:"ng/mL",rg:"20-300",m:"20-300",f:"20-200",no:"Iron stores. Also an acute phase reactant (elevated in inflammation, infection, malignancy). <15 = depleted stores."},
+{nm:"Transferrin Saturation",ab:"TSAT",ct:"Chemistry",un:"%",rg:"20-50",no:"<20% suggests iron deficiency; >50% suggests iron overload (hemochromatosis). Calculate: (Iron / TIBC) x 100."},
+{nm:"Lactate Dehydrogenase",ab:"LDH",ct:"Chemistry",un:"U/L",rg:"140-280",no:"Elevated in tissue damage (liver, heart, muscle, RBCs). Prognostic marker in lymphoma, testicular cancer, melanoma."},
+{nm:"Creatine Kinase",ab:"CK",ct:"Chemistry",un:"U/L",rg:"55-170",m:"55-170",f:"30-135",no:"Muscle enzyme. Elevated after exercise, in rhabdomyolysis, MI, myositis, IM injections."},
+{nm:"CK-MB",ab:"CK-MB",ct:"Chemistry",un:"U/L",rg:"0-12",no:"Cardiac-specific CK isoenzyme. Rises 4-6 hours after MI. Peaks at 24 hours. CK-MB index >2.5 suggests MI."},
+{nm:"Troponin I",ab:"cTnI",ct:"Chemistry",un:"ng/L",rg:"<26",no:"Highly specific for cardiac muscle injury. Rises 3-6 hours after MI. Remains elevated 7-10 days. Gold standard for MI diagnosis."},
+{nm:"Troponin T",ab:"cTnT",ct:"Chemistry",un:"ng/L",rg:"<14",no:"Alternative cardiac marker. Rises 3-4 hours after MI. Remains elevated 10-14 days. Slightly less specific than Troponin I."},
+{nm:"Lactate",ab:"Lac",ct:"Chemistry",un:"mmol/L",rg:"0.5-2.2",no:"Elevated in tissue hypoperfusion (shock, sepsis), seizures, metformin toxicity. >4 = poor prognosis; >8 = very high mortality."},
+{nm:"Ammonia",ab:"NH3",ct:"Chemistry",un:"ug/dL",rg:"15-45",no:"Elevated in hepatic encephalopathy, urea cycle disorders, Reye syndrome. Must be on ice and processed immediately."},
+{nm:"Amylase",ab:"AMY",ct:"Chemistry",un:"U/L",rg:"30-110",no:"Elevated in acute pancreatitis (3x upper limit), salivary gland disease, intestinal obstruction, mumps."},
+{nm:"Lipase",ab:"LPS",ct:"Chemistry",un:"U/L",rg:"10-140",no:"More specific for pancreatitis than amylase. Remains elevated longer. Lipase:amylase ratio >2 suggests pancreatic source."},
+{nm:"Thyroid Stimulating Hormone",ab:"TSH",ct:"Endocrinology",un:"mIU/L",rg:"0.4-4.0",no:"Primary screen for thyroid function. >4 = hypothyroidism; <0.4 = hyperthyroidism. Check free T4 to confirm."},
+{nm:"Free T4",ab:"fT4",ct:"Endocrinology",un:"ng/dL",rg:"0.8-1.8",no:"Active thyroid hormone. Low in hypothyroidism; high in hyperthyroidism. More reliable than total T4."},
+{nm:"Free T3",ab:"fT3",ct:"Endocrinology",un:"pg/mL",rg:"2.3-4.2",no:"More biologically active than T4. Elevated in hyperthyroidism, T3 toxicosis. Low in non-thyroidal illness syndrome."},
+{nm:"Thyroglobulin Antibodies",ab:"TgAb",ct:"Endocrinology",un:"IU/mL",rg:"<4.0",no:"Marker of autoimmune thyroiditis (Hashimoto's). Also monitored in thyroid cancer follow-up."},
+{nm:"Thyroid Peroxidase Antibodies",ab:"TPOAb",ct:"Endocrinology",un:"IU/mL",rg:"<9.0",no:"Most common autoantibody in Hashimoto's thyroiditis. Present in 90% of cases. Also seen in Graves' disease."},
+{nm:"Parathyroid Hormone",ab:"PTH",ct:"Endocrinology",un:"pg/mL",rg:"10-65",no:"Regulates calcium. Elevated in hyperparathyroidism, vitamin D deficiency; low in hypoparathyroidism, hypercalcemia of malignancy."},
+{nm:"Calcitonin",ab:"CT",ct:"Endocrinology",un:"pg/mL",rg:"<8.4",m:"<8.4",f:"<5.0",no:"Marker for medullary thyroid carcinoma. Also elevated in C-cell hyperplasia, chronic kidney disease."},
+{nm:"Cortisol (Morning)",ab:"Cortisol",ct:"Endocrinology",un:"ug/dL",rg:"10-20",no:"Diurnal variation: highest in morning (8 AM), lowest at midnight. Loss of rhythm suggests Cushing's syndrome."},
+{nm:"Cortisol (Evening)",ab:"Cortisol-PM",ct:"Endocrinology",un:"ug/dL",rg:"3-10",no:"Should be <50% of morning value. Elevated evening cortisol with loss of diurnal rhythm is diagnostic of Cushing's."},
+{nm:"ACTH",ab:"ACTH",ct:"Endocrinology",un:"pg/mL",rg:"7.2-63.3",no:"Adrenocorticotropic hormone. Elevated in Addison's disease, Cushing's (ACTH-dependent); low in Cushing's (adrenal), steroid use."},
+{nm:"Aldosterone",ab:"Aldo",ct:"Endocrinology",un:"ng/dL",rg:"2-9",no:"Measured upright. Elevated in primary hyperaldosteronism (Conn's syndrome), secondary hyperaldosteronism (renovascular disease)."},
+{nm:"Renin",ab:"Renin",ct:"Endocrinology",un:"ng/mL/hr",rg:"0.65-5.0",no:"Part of RAAS system. ARR >20 with aldosterone >15 suggests primary hyperaldosteronism. Suppressed in Conn's."},
+{nm:"Insulin",ab:"INS",ct:"Endocrinology",un:"uIU/mL",rg:"2.6-24.9",no:"Elevated in insulin resistance, type 2 diabetes, insulinoma; low in type 1 diabetes. Check with glucose for HOMA-IR."},
+{nm:"C-Peptide",ab:"C-Pep",ct:"Endocrinology",un:"ng/mL",rg:"0.78-5.19",no:"Reflects endogenous insulin production. Distinguishes type 1 (low) vs type 2 (normal/high) diabetes. Also used for insulinoma."},
+{nm:"Prolactin",ab:"PRL",ct:"Endocrinology",un:"ng/mL",rg:"2-18",m:"2-18",f:"2-29",no:"Elevated in prolactinoma, hypothyroidism, pregnancy, chest wall injury, certain medications (antipsychotics, metoclopramide)."},
+{nm:"Testosterone (Total)",ab:"TT",ct:"Endocrinology",un:"ng/dL",rg:"270-1070",m:"270-1070",f:"15-70",no:"Diurnal variation: highest in morning (8 AM). Low in hypogonadism, pituitary disease, chronic illness."},
+{nm:"Testosterone (Free)",ab:"fT",ct:"Endocrinology",un:"pg/mL",rg:"46-224",m:"46-224",f:"0.2-5.0",no:"Biologically active testosterone. More accurate than total in obesity, aging, SHBG abnormalities."},
+{nm:"Estradiol",ab:"E2",ct:"Endocrinology",un:"pg/mL",rg:"10-40",m:"10-40",f:"30-100",no:"Varies widely with menstrual cycle: follicular 30-100, mid-cycle 200-400, luteal 50-150, postmenopausal <20."},
+{nm:"Progesterone",ab:"P4",ct:"Endocrinology",un:"ng/mL",rg:"<1",no:"Follicular: <1, Luteal: 5-20, Pregnancy: 10-290. Essential for endometrial preparation and pregnancy maintenance."},
+{nm:"Follicle Stimulating Hormone",ab:"FSH",ct:"Endocrinology",un:"mIU/mL",rg:"1.5-12.4",m:"1.5-12.4",f:"3.5-12.5",no:"Elevated in menopause (>40), primary gonadal failure; low in hypogonadotropic hypogonadism, Kallmann syndrome."},
+{nm:"Luteinizing Hormone",ab:"LH",ct:"Endocrinology",un:"mIU/mL",rg:"1.7-8.6",m:"1.7-8.6",f:"2.4-12.6",no:"Mid-cycle surge (10x baseline) triggers ovulation. Elevated in PCOS, menopause; low in hypothalamic disorders."},
+{nm:"Growth Hormone",ab:"GH",ct:"Endocrinology",un:"ng/mL",rg:"<5",no:"Fasting baseline. Elevated in acromegaly, gigantism; low in growth hormone deficiency. Stimulation tests needed for diagnosis."},
+{nm:"IGF-1",ab:"IGF-1",ct:"Endocrinology",un:"ng/mL",rg:"Age-dependent",no:"Reflects integrated GH exposure over days. Used to screen for acromegaly (elevated) and GH deficiency (low). Age-adjusted."},
+{nm:"DHEA-S",ab:"DHEA-S",ct:"Endocrinology",un:"ug/dL",rg:"65-380",m:"65-380",f:"35-430",no:"Adrenal androgen precursor. Elevated in adrenal tumors, PCOS, precocious puberty. Decreases with age."},
+{nm:"17-Hydroxyprogesterone",ab:"17-OHP",ct:"Endocrinology",un:"ng/mL",rg:"<2.0",no:"Elevated in congenital adrenal hyperplasia (21-hydroxylase deficiency). Newborn screening test. Baseline or ACTH-stimulated."},
+{nm:"Vitamin D (25-OH)",ab:"Vit D",ct:"Endocrinology",un:"ng/mL",rg:"30-100",no:"Deficiency: <20. Insufficiency: 20-29. Optimal: 30-100. Toxicity: >150. Check PTH if deficient."},
+{nm:"Vitamin B12",ab:"B12",ct:"Endocrinology",un:"pg/mL",rg:"200-900",no:"Deficiency causes megaloblastic anemia and neuropathy. Borderline 200-300 may still cause symptoms. Check methylmalonic acid if borderline."},
+{nm:"Folate",ab:"Folate",ct:"Endocrinology",un:"ng/mL",rg:"3.0-20.0",no:"Deficiency causes megaloblastic anemia. Red cell folate more reflective of tissue stores than serum. Check B12 simultaneously."},
+{nm:"Prothrombin Time",ab:"PT",ct:"Coagulation",un:"seconds",rg:"11-13.5",no:"Measures extrinsic pathway (factors II, V, VII, X, fibrinogen). Prolonged in warfarin therapy, liver disease, DIC, vitamin K deficiency."},
+{nm:"International Normalized Ratio",ab:"INR",ct:"Coagulation",un:"ratio",rg:"0.8-1.2",no:"Therapeutic on warfarin: 2.0-3.0 (most indications); 2.5-3.5 (mechanical valves). >4.5 = high bleeding risk."},
+{nm:"Activated Partial Thromboplastin Time",ab:"aPTT",ct:"Coagulation",un:"seconds",rg:"25-35",no:"Measures intrinsic pathway. Prolonged in heparin therapy, hemophilia, von Willebrand disease, lupus anticoagulant."},
+{nm:"Fibrinogen",ab:"FIB",ct:"Coagulation",un:"mg/dL",rg:"200-400",no:"Acute phase reactant. Low in DIC, liver disease, afibrinogenemia. Elevated in inflammation, pregnancy, oral contraceptives."},
+{nm:"D-Dimer",ab:"D-Dimer",ct:"Coagulation",un:"ng/mL FEU",rg:"<500",no:"Fibrin degradation product. Elevated in DVT, PE, DIC, post-surgery, pregnancy, malignancy. Negative rules out PE in low-intermediate probability."},
+{nm:"Bleeding Time",ab:"BT",ct:"Coagulation",un:"minutes",rg:"2-9",no:"Assesses platelet function and von Willebrand factor. Prolonged in von Willebrand disease, thrombocytopenia, platelet dysfunction, aspirin use."},
+{nm:"C-Reactive Protein",ab:"CRP",ct:"Immunology",un:"mg/L",rg:"<10",no:"Acute phase reactant. Rises within 6 hours of inflammation. Elevated in infection, inflammation, tissue injury, surgery."},
+{nm:"High-Sensitivity CRP",ab:"hs-CRP",ct:"Immunology",un:"mg/L",rg:"<1.0",no:"Cardiovascular risk stratification: low <1, moderate 1-3, high >3. Independent predictor of CV events."},
+{nm:"Rheumatoid Factor",ab:"RF",ct:"Immunology",un:"IU/mL",rg:"<14",no:"Elevated in rheumatoid arthritis (70-80%), but non-specific. Also elevated in Sjogren's, SLE, chronic infections, cryoglobulinemia."},
+{nm:"Anti-CCP Antibodies",ab:"Anti-CCP",ct:"Immunology",un:"U/mL",rg:"<20",no:"Highly specific for rheumatoid arthritis (>95%). Present early in disease. Positive patients have more erosive disease."},
+{nm:"ANA",ab:"ANA",ct:"Immunology",un:"titer",rg:"<1:40",no:"Screening for autoimmune disease. Low titer (1:40-1:80) may be normal in elderly. Pattern suggests specific diseases."},
+{nm:"Anti-dsDNA",ab:"Anti-dsDNA",ct:"Immunology",un:"IU/mL",rg:"<30",no:"Highly specific for systemic lupus erythematosus (SLE). Titer correlates with disease activity, especially lupus nephritis."},
+{nm:"Anti-Smith Antibodies",ab:"Anti-Sm",ct:"Immunology",un:"U/mL",rg:"<1.0",no:"Specific for SLE (20-30% of patients). Once positive, always positive. Does not correlate with disease activity."},
+{nm:"Complement C3",ab:"C3",ct:"Immunology",un:"mg/dL",rg:"90-180",no:"Low in active SLE, immune complex diseases, post-streptococcal GN, sepsis. Consumed during immune complex deposition."},
+{nm:"Complement C4",ab:"C4",ct:"Immunology",un:"mg/dL",rg:"10-40",no:"Low in SLE (especially with anti-dsDNA), hereditary angioedema (C1-INH deficiency). Consumed with C3 in immune complexes."},
+{nm:"Immunoglobulin G",ab:"IgG",ct:"Immunology",un:"mg/dL",rg:"700-1600",no:"Major antibody class (75% of serum antibodies). Elevated in chronic infections, autoimmune disease, liver disease."},
+{nm:"Immunoglobulin A",ab:"IgA",ct:"Immunology",un:"mg/dL",rg:"70-400",no:"Mucosal immunity. Elevated in celiac disease, liver disease, selective IgA deficiency (most common primary immunodeficiency)."},
+{nm:"Immunoglobulin M",ab:"IgM",ct:"Immunology",un:"mg/dL",rg:"40-230",no:"Primary antibody response. Elevated in acute infection, Waldenstrom macroglobulinemia, cold agglutinin disease."},
+{nm:"Immunoglobulin E",ab:"IgE",ct:"Immunology",un:"IU/mL",rg:"<100",no:"Allergic and parasitic responses. Very elevated in allergic bronchopulmonary aspergillosis, hyper-IgE syndrome."},
+{nm:"HIV Antibody/Antigen",ab:"HIV Ag/Ab",ct:"Immunology",un:"-",rg:"Non-reactive",no:"4th generation test detects p24 antigen and antibodies. Window period ~18 days. Reactive requires Western blot or RNA confirmation."},
+{nm:"Hepatitis B Surface Antigen",ab:"HBsAg",ct:"Immunology",un:"-",rg:"Non-reactive",no:"Marker of active HBV infection. First serologic marker to appear. Persists in chronic infection."},
+{nm:"Hepatitis B Surface Antibody",ab:"Anti-HBs",ct:"Immunology",un:"mIU/mL",rg:">10",no:"Marker of immunity (vaccination or recovery). >10 = protective. Check after vaccination series completion."},
+{nm:"Hepatitis C Antibody",ab:"Anti-HCV",ct:"Immunology",un:"-",rg:"Non-reactive",no:"Screening test; confirm with HCV RNA if reactive. May be falsely negative in immunocompromised or early infection."},
+{nm:"Alpha-Fetoprotein",ab:"AFP",ct:"Tumor Markers",un:"ng/mL",rg:"<10",no:"Elevated in hepatocellular carcinoma (>400 suggests HCC), germ cell tumors, pregnancy, chronic liver disease."},
+{nm:"Carcinoembryonic Antigen",ab:"CEA",ct:"Tumor Markers",un:"ng/mL",rg:"<3.0",no:"Non-smoker: <3.0, Smoker: <5.0. Elevated in colorectal cancer, but non-specific. Used for monitoring, not screening."},
+{nm:"CA 19-9",ab:"CA 19-9",ct:"Tumor Markers",un:"U/mL",rg:"<37",no:"Pancreatic cancer marker. Also elevated in biliary obstruction, cholangitis, pancreatitis. Lewis antigen negative = false negative."},
+{nm:"CA 125",ab:"CA 125",ct:"Tumor Markers",un:"U/mL",rg:"<35",no:"Ovarian cancer marker. Also elevated in endometriosis, pregnancy, ascites, pericarditis, menstruation. Not for screening."},
+{nm:"CA 15-3",ab:"CA 15-3",ct:"Tumor Markers",un:"U/mL",rg:"<30",no:"Breast cancer monitoring. Not useful for screening. Elevated in benign breast disease, liver disease, lung cancer."},
+{nm:"Prostate-Specific Antigen",ab:"PSA",ct:"Tumor Markers",un:"ng/mL",rg:"<4.0",no:"Screening controversy. 4-10 = intermediate risk (25% cancer); >10 = high risk (50% cancer). Velocity and density improve specificity."},
+{nm:"Free PSA Ratio",ab:"fPSA%",ct:"Tumor Markers",un:"%",rg:">25",no:"<10% suggests cancer; 10-25% intermediate; >25% suggests BPH. Use when total PSA 4-10. Improves specificity."},
+{nm:"Beta-hCG",ab:"b-hCG",ct:"Tumor Markers",un:"mIU/mL",rg:"<5",no:"Non-pregnant: <5. Doubles every 48-72 hours in early pregnancy. Elevated in germ cell tumors, choriocarcinoma, ectopic pregnancy."},
+{nm:"LDH (Tumor)",ab:"LDH",ct:"Tumor Markers",un:"U/L",rg:"140-280",no:"Prognostic marker in lymphoma (IPI), testicular cancer (IGCCCG), melanoma. Nonspecific tissue damage marker."},
+{nm:"Urine pH",ab:"pH",ct:"Urinalysis",un:"-",rg:"4.5-8.0",no:"Acidic in high protein diet, metabolic acidosis. Alkaline in UTIs (Proteus), renal tubular acidosis, vegetarian diet."},
+{nm:"Urine Specific Gravity",ab:"SG",ct:"Urinalysis",un:"-",rg:"1.005-1.030",no:"Concentrating ability. Fixed at 1.010 suggests renal tubular damage (isosthenuria)."},
+{nm:"Urine Protein",ab:"UP",ct:"Urinalysis",un:"mg/dL",rg:"<10",no:">150 mg/day = proteinuria. Nephrotic range: >3.5 g/day. Orthostatic proteinuria is benign in adolescents."},
+{nm:"Urine Glucose",ab:"UGlu",ct:"Urinalysis",un:"-",rg:"Negative",no:"Positive when blood glucose >180 mg/dL (renal threshold). Negative in DKA (ketonuria present instead)."},
+{nm:"Urine Ketones",ab:"UKet",ct:"Urinalysis",un:"-",rg:"Negative",no:"Positive in starvation, DKA, low-carb diets, vomiting in children. 3+ in DKA requires urgent treatment."},
+{nm:"Urine Bilirubin",ab:"UBili",ct:"Urinalysis",un:"-",rg:"Negative",no:"Positive in conjugated hyperbilirubinemia (obstructive jaundice, hepatitis). Negative in hemolytic jaundice."},
+{nm:"Urobilinogen",ab:"Urob",ct:"Urinalysis",un:"mg/dL",rg:"0.2-1.0",no:"Absent in complete biliary obstruction; increased in hemolysis, hepatitis. Converted from bilirubin by gut bacteria."},
+{nm:"Urine Nitrite",ab:"Nitrite",ct:"Urinalysis",un:"-",rg:"Negative",no:"Positive suggests gram-negative UTI (bacteria reduce nitrate). False negative if urine not retained in bladder >4 hours."},
+{nm:"Urine Leukocyte Esterase",ab:"LE",ct:"Urinalysis",un:"-",rg:"Negative",no:"Positive suggests pyuria (WBCs in urine). Enzyme from neutrophils. Combined with nitrite increases UTI sensitivity."},
+{nm:"Urine RBCs",ab:"URBC",ct:"Urinalysis",un:"/hpf",rg:"0-2",no:">3 RBCs/hpf = hematuria. Evaluate for stones, infection, malignancy, glomerulonephritis, trauma."},
+{nm:"Urine WBCs",ab:"UWBC",ct:"Urinalysis",un:"/hpf",rg:"0-5",no:">5 WBCs/hpf = pyuria. Suggests UTI or inflammation. Contamination from vaginal secretions possible in females."},
+{nm:"Urine Casts",ab:"Casts",ct:"Urinalysis",un:"/lpf",rg:"0-2 hyaline",no:"RBC casts = glomerulonephritis. WBC casts = pyelonephritis. Granular casts = ATN. Waxy casts = chronic kidney disease."},
+{nm:"Urine Bacteria",ab:"Bact",ct:"Urinalysis",un:"-",rg:"None",no:"Any bacteria in clean-catch specimen suggests infection. >10^5 CFU/mL with symptoms = UTI."},
+{nm:"Microalbumin/Creatinine Ratio",ab:"ACR",ct:"Urinalysis",un:"mg/g",rg:"<30",no:"30-300 = moderately increased (A2). >300 = severely increased (A3). Best early marker of diabetic nephropathy."},
+{nm:"pH (ABG)",ab:"pH",ct:"ABG",un:"-",rg:"7.35-7.45",no:"<7.35 = acidemia; >7.45 = alkalemia. Normal pH does not exclude mixed acid-base disorders."},
+{nm:"PaCO2",ab:"PaCO2",ct:"ABG",un:"mmHg",rg:"35-45",no:"Respiratory component. Elevated = respiratory acidosis (hypoventilation); low = respiratory alkalosis (hyperventilation)."},
+{nm:"PaO2",ab:"PaO2",ct:"ABG",un:"mmHg",rg:"80-100",no:"Decreases with age: ~100 - (age/3). <60 = hypoxemia. On room air; increases with supplemental O2."},
+{nm:"HCO3- (ABG)",ab:"HCO3",ct:"ABG",un:"mEq/L",rg:"22-26",no:"Metabolic component. Elevated = metabolic alkalosis; low = metabolic acidosis. Also affected by respiratory compensation."},
+{nm:"Base Excess",ab:"BE",ct:"ABG",un:"mEq/L",rg:"-2 to +2",no:"Reflects metabolic component. <-2 = metabolic acidosis; >+2 = metabolic alkalosis. More accurate than HCO3 alone."},
+{nm:"SaO2",ab:"SaO2",ct:"ABG",un:"%",rg:"95-100",no:"Oxygen saturation. <90% is clinically significant hypoxemia. Pulse oximetry correlates well except in CO poisoning, methemoglobinemia."},
+{nm:"Lactate (ABG)",ab:"Lac",ct:"ABG",un:"mmol/L",rg:"0.5-1.6",no:"Elevated in tissue hypoperfusion (shock, sepsis), seizures, metformin toxicity. >4 mmol/L associated with increased mortality."},
+{nm:"Brain Natriuretic Peptide",ab:"BNP",ct:"Cardiac",un:"pg/mL",rg:"<100",no:"Elevated in heart failure. >400 strongly suggests HF. <100 rules out HF in acute setting. Elevated in renal failure, AF, PE."},
+{nm:"NT-proBNP",ab:"NT-proBNP",ct:"Cardiac",un:"pg/mL",rg:"<300",no:"<300 rules out acute HF. >900 suggests HF in patients <50 years. Less affected by obesity than BNP. Age-adjusted cutoffs available."},
+{nm:"Troponin I (Cardiac)",ab:"cTnI",ct:"Cardiac",un:"ng/L",rg:"<26",no:"Rises 3-6 hours after MI. Remains elevated 7-10 days. High-sensitivity assays detect chronic low-level elevations in CKD, HF."},
+{nm:"Troponin T (Cardiac)",ab:"cTnT",ct:"Cardiac",un:"ng/L",rg:"<14",no:"Rises 3-4 hours after MI. Remains elevated 10-14 days. Slightly less specific than Troponin I. May be elevated in skeletal muscle injury."},
+{nm:"Creatine Kinase-MB (Cardiac)",ab:"CK-MB",ct:"Cardiac",un:"U/L",rg:"0-12",no:"Rises 4-6 hours after MI. Peaks at 24 hours. CK-MB index >2.5% suggests cardiac source. Less used since troponin introduction."},
+{nm:"Myoglobin",ab:"Myo",ct:"Cardiac",un:"ng/mL",rg:"<70",no:"Rises 1-3 hours after MI. Not cardiac-specific. Cleared rapidly (half-life 2-3 hours). Negative at 4-6 hours rules out MI."},
+{nm:"Homocysteine",ab:"Hcy",ct:"Cardiac",un:"umol/L",rg:"5-15",no:"Elevated in B12/folate deficiency, MTHFR mutation, renal failure. Independent cardiovascular risk factor. >15 = high risk."},
+{nm:"Lipoprotein(a)",ab:"Lp(a)",ct:"Cardiac",un:"mg/dL",rg:"<30",no:"Genetically determined. Independent cardiovascular risk factor. >50 = high risk. Not affected by statins."},
+{nm:"Non-HDL Cholesterol",ab:"Non-HDL",ct:"Lipids",un:"mg/dL",rg:"<130",no:"Total cholesterol minus HDL. Target for high-risk patients: <100. Includes all atherogenic particles (LDL, VLDL, IDL, Lp(a))."},
+{nm:"Apolipoprotein A1",ab:"ApoA1",ct:"Lipids",un:"mg/dL",rg:"100-170",m:"100-170",f:"110-190",no:"Major protein of HDL. Better predictor of HDL function than HDL-C alone. Low in Tangier disease."},
+{nm:"Apolipoprotein B",ab:"ApoB",ct:"Lipids",un:"mg/dL",rg:"<90",no:"Major protein of LDL, VLDL, IDL. Better predictor of CV risk than LDL alone. One ApoB particle per atherogenic lipoprotein."},
+{nm:"Small Dense LDL",ab:"sdLDL",ct:"Lipids",un:"mg/dL",rg:"<30",no:"More atherogenic than large buoyant LDL. Associated with insulin resistance, metabolic syndrome, hypertriglyceridemia."},
+{nm:"CSF Opening Pressure",ab:"OP",ct:"CSF",un:"cmH2O",rg:"6-20",no:">20 = increased ICP (pseudotumor cerebri, meningitis, mass). <6 = low pressure (leak, dehydration). Measured in lateral decubitus."},
+{nm:"CSF Glucose",ab:"CSF-Glu",ct:"CSF",un:"mg/dL",rg:"40-70",no:"~60% of blood glucose. Low in bacterial/fungal meningitis, TB, carcinomatosis, hypoglycemia. Normal in viral meningitis."},
+{nm:"CSF Protein",ab:"CSF-Prot",ct:"CSF",un:"mg/dL",rg:"15-45",no:"Elevated in meningitis, Guillain-Barre, MS, subarachnoid hemorrhage, spinal block. Very high (>1000) in Froin's syndrome."},
+{nm:"CSF WBC",ab:"CSF-WBC",ct:"CSF",un:"/uL",rg:"0-5",no:">5 suggests infection or inflammation. Bacterial: neutrophils; Viral: lymphocytes; TB: lymphocytes; Fungal: lymphocytes."},
+{nm:"CSF RBC",ab:"CSF-RBC",ct:"CSF",un:"/uL",rg:"0",no:"Any RBCs suggest traumatic tap or subarachnoid hemorrhage. Xanthochromia (yellow supernatant) after 12 hours supports SAH."},
+{nm:"CSF Lactate",ab:"CSF-Lac",ct:"CSF",un:"mmol/L",rg:"1.0-2.0",no:">4 suggests bacterial meningitis. More reliable than glucose in partially treated meningitis. Normal in viral meningitis."},
+{nm:"Blood Culture",ab:"BCx",ct:"Microbiology",un:"-",rg:"No growth",no:"Positive = bacteremia. Usually 2 sets from different sites. Contaminants: coagulase-negative staph, Corynebacterium, Bacillus."},
+{nm:"Urine Culture",ab:"UCx",ct:"Microbiology",un:"CFU/mL",rg:"<10^4",no:">10^5 CFU/mL with symptoms = UTI. 10^4-10^5 = possible UTI. <10^4 = contamination. Single organism = infection; mixed = contamination."},
+{nm:"Sputum Culture",ab:"SCx",ct:"Microbiology",un:"-",rg:"Normal flora",no:"Evaluate for pathogenic organisms. Quality: <25 squamous cells/lpf and >25 PMNs/lpf. Poor quality = request repeat."},
+{nm:"Stool Culture",ab:"Stool Cx",ct:"Microbiology",un:"-",rg:"No pathogens",no:"Evaluates for bacterial enteric pathogens (Salmonella, Shigella, Campylobacter, E. coli O157:H7, Yersinia)."},
+{nm:"Ova and Parasites",ab:"O&P",ct:"Microbiology",un:"-",rg:"Negative",no:"3 samples recommended for highest yield. Concentration and permanent stain increase sensitivity."},
+{nm:"Clostridioides difficile Toxin",ab:"C. diff",ct:"Microbiology",un:"-",rg:"Negative",no:"Causes pseudomembranous colitis. Usually after antibiotic exposure. NAAT detects toxin genes; EIA detects toxins A/B."},
+{nm:"Acid-Fast Bacilli Smear",ab:"AFB",ct:"Microbiology",un:"-",rg:"Negative",no:"Screening for TB. Low sensitivity (50-80%); culture is gold standard. 3 samples increase yield."},
+{nm:"Fungal Culture",ab:"Fungal Cx",ct:"Microbiology",un:"-",rg:"No growth",no:"Takes weeks to grow. Blood culture for disseminated infection. Sabouraud dextrose agar standard medium."},
+{nm:"Osmolality (Serum)",ab:"S-Osm",ct:"Misc",un:"mOsm/kg",rg:"275-295",no:"Effective osmoles: Na, glucose, BUN. Calculated: 2xNa + glucose/18 + BUN/2.8. Elevated in hypernatremia, hyperglycemia, uremia."},
+{nm:"Osmolality (Urine)",ab:"U-Osm",ct:"Misc",un:"mOsm/kg",rg:"300-900",no:"Varies with hydration. >900 = concentrated (dehydration, SIADH); <300 = dilute (DI, psychogenic polydipsia)."},
+{nm:"Anion Gap",ab:"AG",ct:"Misc",un:"mEq/L",rg:"8-12",no:"Na - (Cl + HCO3). Elevated in metabolic acidosis: MUDPILES (Methanol, Uremia, DKA, Paraldehyde, INH, Lactic, Ethylene glycol, Salicylates)."},
+{nm:"Osmolar Gap",ab:"OG",ct:"Misc",un:"mOsm/kg",rg:"<10",no:"Measured - calculated osmolality. >10 suggests toxic alcohol ingestion (methanol, ethylene glycol, isopropanol)."},
+{nm:"Procalcitonin",ab:"PCT",ct:"Misc",un:"ng/mL",rg:"<0.05",no:"<0.5 = unlikely bacterial infection. >2 = likely sepsis. >10 = severe sepsis/shock. More specific than CRP for bacterial infection."},
+{nm:"Prealbumin",ab:"PA",ct:"Misc",un:"mg/dL",rg:"15-35",no:"Nutritional marker. Half-life 2 days (faster than albumin). Sensitive to acute changes in nutritional status."},
+{nm:"Transferrin",ab:"TRF",ct:"Misc",un:"mg/dL",rg:"200-360",no:"Iron transport protein. Also a nutritional marker. Elevated in iron deficiency; low in anemia of chronic disease, malnutrition."},
+{nm:"Haptoglobin",ab:"HPT",ct:"Misc",un:"mg/dL",rg:"30-200",no:"Binds free hemoglobin. Low in hemolysis (intravascular > extravascular). Absent in severe hemolysis. Acute phase reactant."},
+{nm:"Ceruloplasmin",ab:"CP",ct:"Misc",un:"mg/dL",rg:"20-60",no:"Copper transport. Low in Wilson's disease (<20). Elevated in inflammation, pregnancy, oral contraceptives."},
+{nm:"Alpha-1 Antitrypsin",ab:"A1AT",ct:"Misc",un:"mg/dL",rg:"90-200",no:"Low in emphysema (genetic deficiency, PiZZ phenotype). Elevated in inflammation, pregnancy, estrogen."},
+{nm:"Copper (Serum)",ab:"Cu",ct:"Misc",un:"ug/dL",rg:"70-140",no:"Elevated in Wilson's disease, cholestasis, inflammation. Low in Menkes disease, malnutrition, nephrotic syndrome."},
+{nm:"Zinc (Serum)",ab:"Zn",ct:"Misc",un:"ug/dL",rg:"70-120",no:"Low in malabsorption, alcoholism, acrodermatitis enteropathica, chronic illness. Check if unexplained alopecia, dermatitis, diarrhea."},
+{nm:"Selenium",ab:"Se",ct:"Misc",un:"ug/L",rg:"70-150",no:"Cofactor for antioxidant enzymes (glutathione peroxidase). Deficiency in TPN without supplementation, Keshan disease."},
+{nm:"Lead (Blood)",ab:"Pb",ct:"Misc",un:"ug/dL",rg:"<5",no:"CDC reference level. >5 = elevated; >45 = chelation therapy indicated. >70 = encephalopathy risk. Sources: paint, water, soil, occupational."},
+{nm:"Arsenic (24h Urine)",ab:"As",ct:"Misc",un:"ug/24h",rg:"<50",no:"Toxic exposure marker. Seafood can cause transient elevation (organic arsenic). Inorganic arsenic is toxic."},
+{nm:"Ethanol",ab:"EtOH",ct:"Misc",un:"mg/dL",rg:"0",no:"Legal limit for driving: 80 mg/dL (0.08%). >150 = gross intoxication; >300 = stupor; >400 = potentially fatal."},
+{nm:"Salicylate",ab:"Salicylate",ct:"Misc",un:"mg/dL",rg:"10-30",no:"Therapeutic: 10-30. >30 = toxicity (tinnitus, hyperventilation); >100 = severe/life-threatening."},
+{nm:"Acetaminophen",ab:"APAP",ct:"Misc",un:"ug/mL",rg:"10-30",no:">150 at 4 hours post-ingestion = treat with NAC (Rumack-Matthew nomogram). >300 = severe hepatotoxicity risk."},
+{nm:"Digoxin",ab:"Digoxin",ct:"Misc",un:"ng/mL",rg:"0.5-0.9",no:"Narrow therapeutic index. >2.0 = toxicity. Check level 6-8 hours post-dose. Hypokalemia potentiates toxicity."},
+{nm:"Vancomycin (Trough)",ab:"Vanco",ct:"Misc",un:"ug/mL",rg:"10-20",no:"15-20 for serious infections/MRSA pneumonia. Nephrotoxic at high levels. Trough measured before next dose."},
+{nm:"Gentamicin (Trough)",ab:"Gent",ct:"Misc",un:"ug/mL",rg:"<2",no:"Peak: 5-10. Nephrotoxic and ototoxic. Trough monitoring essential. Extended interval dosing may be used."},
+{nm:"Phenytoin (Total)",ab:"PHT",ct:"Misc",un:"ug/mL",rg:"10-20",no:"Narrow therapeutic index. >20 = toxicity (nystagmus, ataxia). Highly protein-bound; free fraction more relevant in hypoalbuminemia."},
+{nm:"Carbamazepine",ab:"CBZ",ct:"Misc",un:"ug/mL",rg:"4-12",no:"Auto-induction of metabolism. Check levels after 2-4 weeks. >12 = toxicity (diplopia, ataxia, hyponatremia)."},
+{nm:"Valproic Acid",ab:"VPA",ct:"Misc",un:"ug/mL",rg:"50-100",no:">100 = toxicity (tremor, thrombocytopenia, hepatotoxicity). Highly protein-bound; free fraction increases in hypoalbuminemia."},
+{nm:"Lithium",ab:"Li",ct:"Misc",un:"mEq/L",rg:"0.6-1.2",no:">1.5 = mild toxicity; >2.5 = severe. Check 12 hours post-dose. Nephrogenic DI, tremor common side effects."},
+{nm:"Theophylline",ab:"Theo",ct:"Misc",un:"ug/mL",rg:"5-15",no:"Narrow index. >20 = toxicity (seizures, arrhythmias). Metabolized by CYP1A2; affected by smoking, caffeine, macrolides, fluoroquinolones."},
+{nm:"Cyclosporine",ab:"CSA",ct:"Misc",un:"ng/mL",rg:"100-400",no:"Nephrotoxic. Trough measured immediately before next dose. CYP3A4 substrate; many drug interactions."},
+{nm:"Tacrolimus",ab:"TAC",ct:"Misc",un:"ng/mL",rg:"5-15",no:"Nephrotoxic and neurotoxic. Trough monitoring. CYP3A4 substrate. Diabetes risk with long-term use."},
+{nm:"Mycophenolate",ab:"MPA",ct:"Misc",un:"ug/mL",rg:"1.0-3.5",no:"Immunosuppressant. Monitor for toxicity and efficacy. Teratogenic; contraception required."},
+{nm:"Methotrexate",ab:"MTX",ct:"Misc",un:"umol/L",rg:"<0.1",no:"72h post-high-dose target. Leucovorin rescue if >0.1 at 48 hours. Nephrotoxicity delays clearance."},
+{nm:"5-HIAA (24h Urine)",ab:"5-HIAA",ct:"Misc",un:"mg/24h",rg:"2-8",no:"Serotonin metabolite. Elevated in carcinoid syndrome. Avoid serotonin-rich foods (bananas, walnuts, avocados) 48h before collection."},
+{nm:"Metanephrines (Plasma)",ab:"Metanephrines",ct:"Misc",un:"pg/mL",rg:"<61",no:"Screening for pheochromocytoma. Very sensitive. Supine rest 30 min before draw. False positives with stress, caffeine, certain medications."},
+{nm:"Catecholamines (24h Urine)",ab:"Catecholamines",ct:"Misc",un:"ug/24h",rg:"Epi <20 | Norepi <80",no:"Elevated in pheochromocytoma. Avoid stress, caffeine, nicotine during collection. Refrigerate collection container."},
+{nm:"Aldosterone/Renin Ratio",ab:"ARR",ct:"Misc",un:"ng/dL per ng/mL/hr",rg:"<20",no:">20 suggests primary hyperaldosteronism. Measure upright after 2-4h ambulation. K-sparing diuretics interfere."},
+{nm:"Plasma Metanephrines",ab:"PMN",ct:"Misc",un:"pmol/L",rg:"Normeta <900 | Meta <500",no:"Best screening test for pheochromocytoma. Supine rest required. Very high specificity when elevated."},
+{nm:"Serum Free Light Chains",ab:"sFLC",ct:"Misc",un:"mg/L",rg:"k 3.3-19.4 | l 5.7-26.3",no:"k/l ratio: 0.26-1.65. Abnormal in multiple myeloma, AL amyloidosis, MGUS. Involved/uninvolved ratio prognostic."},
+{nm:"Beta-2 Microglobulin",ab:"b2M",ct:"Misc",un:"mg/L",rg:"1.0-3.0",no:"Elevated in lymphoproliferative disorders, renal dysfunction, HIV. Prognostic in multiple myeloma and lymphoma."},
+{nm:"Serum Protein Electrophoresis",ab:"SPEP",ct:"Misc",un:"-",rg:"Alb 55-65% | a1 2.5-5% | a2 7-13% | b 8-14% | g 12-22%",no:"M-spike suggests monoclonal gammopathy. Quantify with densitometry. Follow with immunofixation for typing."},
+{nm:"Urine Protein Electrophoresis",ab:"UPEP",ct:"Misc",un:"-",rg:"No monoclonal spike",no:"Bence Jones protein in light chain myeloma. Requires concentrated urine. Immunofixation more sensitive than standard UPEP."},
+{nm:"Cryoglobulins",ab:"Cryo",ct:"Misc",un:"-",rg:"Negative",no:"Type II/III associated with hepatitis C, lymphoproliferative disorders. Draw blood warm; transport at 37C. Precipitates at 4C."},
+{nm:"Cold Agglutinins",ab:"CA",ct:"Misc",un:"titer",rg:"<1:64",no:"Elevated in Mycoplasma pneumonia, EBV, lymphoma, Waldenstrom macroglobulinemia. Draw blood warm; keep at 37C."},
+{nm:"Direct Coombs Test",ab:"DAT",ct:"Misc",un:"-",rg:"Negative",no:"Positive in autoimmune hemolytic anemia, hemolytic disease of newborn, drug-induced hemolysis. IgG = warm AIHA; IgM = cold agglutinin."},
+{nm:"Indirect Coombs Test",ab:"IAT",ct:"Misc",un:"-",rg:"Negative",no:"Detects antibodies in serum. Used in cross-matching and antibody screening. Positive = alloantibodies present."},
+{nm:"G6PD Activity",ab:"G6PD",ct:"Misc",un:"U/g Hb",rg:"4.6-13.5",no:"Deficiency causes hemolytic anemia with oxidative stress (fava beans, sulfa drugs, primaquine, nitrofurantoin)."},
+{nm:"Hemoglobin Electrophoresis",ab:"HbEP",ct:"Misc",un:"%",rg:"HbA >95% | HbA2 1.5-3.5% | HbF <2%",no:"HbA2 >3.5% suggests beta-thalassemia trait. HbF elevated in beta-thalassemia major, hereditary persistence of HbF."},
+{nm:"Sickle Cell Screen",ab:"SCS",ct:"Misc",un:"-",rg:"Negative",no:"Positive in sickle cell disease and trait. Confirm with HbEP. Solubility test (Sickledex) is screening method."},
+{nm:"Heinz Bodies",ab:"Heinz",ct:"Misc",un:"-",rg:"None",no:"Denatured hemoglobin. Seen in G6PD deficiency, unstable hemoglobinopathies, oxidative drug exposure. Supravital stain required."},
+{nm:"Schistocytes",ab:"Schisto",ct:"Misc",un:"%",rg:"<1",no:"Fragmented RBCs. >1% suggests microangiopathic hemolytic anemia (TTP, HUS, DIC, malignant hypertension, HELLP)."},
+{nm:"Reticulocyte Production Index",ab:"RPI",ct:"Misc",un:"-",rg:"1.0-2.0",no:"Corrects retic count for anemia severity. <2 = hypoproliferative (bone marrow failure); >2 = hyperproliferative (hemolysis, blood loss)."},
+{nm:"Erythropoietin",ab:"EPO",ct:"Misc",un:"mIU/mL",rg:"4-27",no:"Elevated in anemia of kidney disease; low in polycythemia vera. Inappropriately normal/low EPO with high Hct suggests PV."},
+{nm:"Serum Free Hemoglobin",ab:"SFHgb",ct:"Misc",un:"mg/dL",rg:"<5",no:"Elevated in intravascular hemolysis. Haptoglobin binds free Hgb; both low in hemolysis. Haptoglobin more commonly measured."},
+{nm:"Methemoglobin",ab:"MetHb",ct:"Misc",un:"%",rg:"<1",no:">10% = cyanosis; >50% = life-threatening. Caused by oxidant drugs/toxins (dapsone, nitrates, local anesthetics). Methylene blue treatment."},
+{nm:"Carboxyhemoglobin",ab:"COHb",ct:"Misc",un:"%",rg:"<2",no:"Non-smoker: <2, Smoker: <9. >10% = symptomatic CO poisoning; >50% = potentially fatal. Cherry-red skin color is late sign."},
+{nm:"Cholinesterase (Serum)",ab:"ChE",ct:"Misc",un:"U/L",rg:"5000-12000",no:"Low in organophosphate/carbamate poisoning, liver disease, succinylcholine apnea (genetic deficiency). Pralidoxime for OP poisoning."},
+{nm:"Tryptase",ab:"Tryptase",ct:"Misc",un:"ug/L",rg:"<11.5",no:"Elevated in mastocytosis and anaphylaxis. Peak 1-2 hours after event. Total tryptase >20 + >20% + 2ng/mL above baseline = mastocytosis."},
+{nm:"IgG Subclasses",ab:"IgG-SC",ct:"Misc",un:"mg/dL",rg:"IgG1 380-930 | IgG2 240-700 | IgG3 25-115 | IgG4 13-320",no:"IgG2 deficiency associated with polysaccharide response defects. IgG4 elevated in IgG4-related disease."},
+{nm:"Anti-Streptolysin O Titer",ab:"ASO",ct:"Misc",un:"IU/mL",rg:"<200",no:"Elevated in recent streptococcal infection. Peaks 3-5 weeks after infection. Declines over 6-12 months."},
+{nm:"Anti-DNase B",ab:"Anti-DNase B",ct:"Misc",un:"U/mL",rg:"<200",no:"More specific for skin streptococcal infections than ASO. Peaks later than ASO. Useful when ASO negative."},
+{nm:"QuantiFERON-TB Gold",ab:"QFT",ct:"Misc",un:"-",rg:"Negative",no:"IGRA for latent TB. Not affected by BCG vaccination. Indeterminate = immunosuppression or technical error."},
+{nm:"T-SPOT.TB",ab:"T-SPOT",ct:"Misc",un:"-",rg:"Negative",no:"Alternative IGRA for TB screening. Similar performance to QFT. Less affected by immunosuppression than QFT."},
+{nm:"Rapid Plasma Reagin",ab:"RPR",ct:"Misc",un:"titer",rg:"Non-reactive",no:"Non-treponemal syphilis test. False positives in autoimmune disease, viral infections, malignancy, IV drug use."},
+{nm:"VDRL",ab:"VDRL",ct:"Misc",un:"titer",rg:"Non-reactive",no:"CSF VDRL is specific for neurosyphilis. Serologic tests may be negative in very early or late latent syphilis."},
+{nm:"FTA-ABS",ab:"FTA-ABS",ct:"Misc",un:"-",rg:"Non-reactive",no:"Treponemal-specific test. Remains positive for life after treatment. Does not distinguish active from past infection."},
+{nm:"TPPA",ab:"TPPA",ct:"Misc",un:"-",rg:"Non-reactive",no:"Treponemal-specific confirmatory test. Similar to FTA-ABS. Once positive, always positive."},
+{nm:"Hepatitis B Core Antibody",ab:"Anti-HBc",ct:"Misc",un:"-",rg:"Non-reactive",no:"IgM = acute infection; IgG = past/resolved infection. Window period marker (HBsAg negative, Anti-HBc positive)."},
+{nm:"Hepatitis B e Antigen",ab:"HBeAg",ct:"Misc",un:"-",rg:"Non-reactive",no:"Marker of active viral replication and infectivity. Seroconversion (HBeAg to Anti-HBe) = favorable prognosis."},
+{nm:"Hepatitis B Viral Load",ab:"HBV DNA",ct:"Misc",un:"IU/mL",rg:"Undetectable",no:">2000 = active chronic hepatitis B. >20,000 = high replication. Guides treatment decisions and monitors response."}];
+
+const cats=[...new Set(tests.map(t=>t.ct))].sort();
+let activeCat='All';
+let searchQ='';
+
+function renderCats(){
+  const el=document.getElementById('catsScroll');
+  el.innerHTML='<div class="cat-chip'+(activeCat==='All'?' active':'')+'" data-cat="All"><span>All</span></div>'+
+    cats.map(c=>'<div class="cat-chip'+(activeCat===c?' active':'')+'" data-cat="'+c+'"><span>'+c+'</span></div>').join('');
+  el.querySelectorAll('.cat-chip').forEach(ch=>{
+    ch.addEventListener('click',()=>{activeCat=ch.dataset.cat;renderCats();renderTests();});
+  });
+}
+
+function renderTests(){
+  const el=document.getElementById('results');
+  const q=searchQ.toLowerCase().trim();
+  let filtered=tests;
+  if(activeCat!=='All') filtered=filtered.filter(t=>t.ct===activeCat);
+  if(q) filtered=filtered.filter(t=>t.nm.toLowerCase().includes(q)||t.ab.toLowerCase().includes(q)||t.ct.toLowerCase().includes(q));
+  document.getElementById('countPill').textContent=filtered.length+' test'+(filtered.length!==1?'s':'');
+  if(!filtered.length){el.innerHTML='<div class="no-results"><div class="no-results-icon">&#128269;</div><h3>No results found</h3><p>Try a different search term or category</p></div>';return;}
+  el.innerHTML=filtered.map((t,i)=>{
+    const hasSex=t.m||t.f;
+    let sexHtml='';
+    if(hasSex){
+      sexHtml='<div class="detail-section"><div class="detail-section-title">Sex-specific ranges</div><div class="detail-grid">';
+      if(t.m) sexHtml+='<div class="detail-row"><span class="detail-label">Male</span><span class="detail-value">'+esc(t.m)+' '+esc(t.un)+'</span></div>';
+      if(t.f) sexHtml+='<div class="detail-row"><span class="detail-label">Female</span><span class="detail-value">'+esc(t.f)+' '+esc(t.un)+'</span></div>';
+      sexHtml+='</div></div>';
+    }
+    return '<div class="test-card" data-idx="'+i+'">'+
+      '<div class="card-top">'+
+        '<div class="card-left">'+
+          '<div class="test-name">'+esc(t.nm)+'<span class="test-abbr">'+esc(t.ab)+'</span></div>'+
+          '<div class="meta-row"><span class="cat-tag">'+esc(t.ct)+'</span><span class="unit-tag">'+esc(t.un)+'</span></div>'+
+        '</div>'+
+        '<div class="card-right">'+
+          '<div class="range-main">'+esc(t.rg)+'</div>'+
+          '<div class="range-sub">'+esc(t.un)+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="card-body">'+
+        (hasSex?sexHtml:'<div class="detail-section"><div class="detail-section-title">Normal range</div><div class="detail-row"><span class="detail-label">Reference</span><span class="detail-value">'+esc(t.rg)+' '+esc(t.un)+'</span></div></div>')+
+        '<div class="clinical-note"><div class="note-header">Clinical note</div><div class="note-text">'+esc(t.no)+'</div></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  el.querySelectorAll('.test-card').forEach(card=>{
+    card.addEventListener('click',()=>card.classList.toggle('expanded'));
+  });
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+document.getElementById('search').addEventListener('input',e=>{searchQ=e.target.value;renderTests();});
+renderCats();renderTests();
+</script>
+</body>
+</html>
