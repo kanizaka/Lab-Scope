@@ -1,5 +1,5 @@
 Lab-Scope
-
+https://kanizaka.github.io/Lab-Scope/
 Lab-Scope is a comprehensive laboratory reference application that provides healthcare professionals, laboratory scientists, biomedical engineers, and medical students with quick access to normal laboratory reference ranges and essential clinical information.
 
 The application serves as a portable laboratory handbook, helping users interpret laboratory values efficiently while improving workflow in hospitals, clinics, and diagnostic laboratories.
